@@ -4,5 +4,6 @@ window.onload = function () {
     //Crafty.canvas.init();
 
     //##src/scenes/load.js
+    //##src/scenes/main.js
     Crafty.scene("loading");
 };
