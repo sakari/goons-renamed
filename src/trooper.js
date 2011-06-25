@@ -24,7 +24,7 @@ Crafty.c('Bullet', {
 				var killed = false;
 				for(var i in hits) {
 				    if (!(hits[i].obj === shooter)) {
-					hits[i].obj.shot();
+					hits[i].obj.trigger('shot');
 					killed = true;
 				    }
 				}
@@ -64,20 +64,27 @@ Crafty.c('target', {
 
 Crafty.c('ai_trooper', {
 	     init : function() {
-		 this.requires("SpriteAnimation, target");
+		 this.requires("SpriteAnimation, trooper");		 
 	     }
 	     , ai_trooper : function() {
-		 return this;
+		 return this.trooper();
 	     }
-	     , shot : function() {
-		 this.stop();
-		 this.destroy();
+	 });
+
+Crafty.c('player_trooper', { 
+	     init : function() {
+		 this.requires("trooper, TrooperControl");
 	     }
+	     , player_trooper : function() {
+		 return this
+		     .trooper()
+		     .TrooperControl();
+	     } 
 	 });
 
 Crafty.c('trooper', { 
 	     init : function() {
-		 this.requires("SpriteAnimation, target, TrooperControl");
+		 this.requires("SpriteAnimation, target");
 	     },
 	     trooper :  function() {
 		 var last_shot_ms = 0;
@@ -85,7 +92,10 @@ Crafty.c('trooper', {
 		 var deviation_rad = 0.2;
 
 		 return this.animate("walk", 0, 0, 3)
-		     .TrooperControl()
+		     .bind('shot', function() {
+			       this.stop();
+			       this.destroy();
+			   }) 
 		     .bind('trooper.shoot', function(direction) {
 			       var current_time = new Date().getTime();
 			       if (last_shot_ms + shoot_delay_ms < current_time) {

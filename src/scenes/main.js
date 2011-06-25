@@ -22,9 +22,9 @@ Crafty.scene("main", function () {
 		 }
 		 generateWorld();
 		 //##src/trooper.js
-		 Crafty.e("2D, DOM, blue_trooper, trooper")
+		 Crafty.e("2D, DOM, blue_trooper, player_trooper")
 		     .attr({ x: 16, y: 20, z:2 })
-		     .trooper();
+		     .player_trooper();
 		 Crafty.e("2D, DOM, blue_trooper, ai_trooper")
 		     .attr({ x: 40, y: 60, z:2 })
 		     .ai_trooper();
