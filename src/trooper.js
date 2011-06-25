@@ -7,16 +7,14 @@ Crafty.sprite(3, 3, "sprites/bullet.png", {
 
 Crafty.c('Bullet', {
 	     init : function() {
-		 this.requires("SpriteAnimation", "Tween");
 	     },
 	     Bullet : function(direction_rad, speed) {
-		 var dx = Math.round(Math.cos(direction_rad) *1000 * speed)/1000;
-		 var dy = Math.round(Math.sin(direction_rad) *1000 * speed)/1000;
-		 console.log("Bullet dx: " + dx + " dy: " + dy);
+		 var d = Trig.to_movement(direction_rad, speed);
 		 return this.bind('EnterFrame', function() {
-				      this.attr('x', this.x + dx);
-				      this.attr('y', this.y + dy);
-				  });
+		 	       this.attr('x', this.x + d.x);
+		 	       this.attr('y', this.y + d.y);
+			       return;
+		 	   });
 	     }
 	 });
 
@@ -33,13 +31,7 @@ Crafty.c('TrooperControl', {
 		     .fourway(1)
 		     .bind("NewDirection", function(movement) {
 			       if (movement.x || movement.y) {
-				   if (movement.x == 0 && movement.y > 0) {
-				       current_direction_rad = 0;
-				   } else if (movement.x == 0 && movement.y < 0) {
-				       current_direction_rad = Math.PI;
-				   } else {
-				       current_direction_rad = Math.atan(movement.y / movement.x);				   
-				   }
+				   current_direction_rad = Math.atan2(movement.y, movement.x);
 			       }
 			   })
 		     .bind('KeyDown', function(e) {
@@ -50,9 +42,9 @@ Crafty.c('TrooperControl', {
 
 			       if (last_shot_ms + shoot_delay_ms < current_time) {
 				   last_shot_ms = current_time;
-			     	   Crafty.e('2D, DOM, Bullet, bullet')
-				       .attr({ x: this.x, y: this.y, z: 3 })
-				       .Bullet(current_direction, 10, 50);
+			     	   Crafty.e('2D, DOM, bullet, Bullet')
+				       .attr({ x: this.x + 3 , y: this.y + 5, z: 3 })
+				       .Bullet(current_direction_rad, 5);
 			       }
 			   });
 	     }
