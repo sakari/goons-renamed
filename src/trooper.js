@@ -39,12 +39,13 @@ Crafty.c('TrooperControl', {
 				   return;
 			       }
 			       var current_time = new Date().getTime();
+			       var deviation_rad = 0.2;
 
 			       if (last_shot_ms + shoot_delay_ms < current_time) {
 				   last_shot_ms = current_time;
 			     	   Crafty.e('2D, DOM, bullet, Bullet')
 				       .attr({ x: this.x + 3 , y: this.y + 5, z: 3 })
-				       .Bullet(current_direction_rad, 5);
+				       .Bullet(Trig.fuzzy_angle(current_direction_rad, deviation_rad), 5);
 			       }
 			   });
 	     }
