@@ -7,17 +7,30 @@ Crafty.sprite(3, 3, "sprites/bullet.png", {
 
 Crafty.c('Bullet', {
 	     init : function() {
+		 this.requires('Collision');
 	     },
-	     Bullet : function(direction_rad, speed, lifetime) {
+	     Bullet : function(direction_rad, speed, lifetime, shooter) {
 		 var d = Trig.to_movement(direction_rad, speed);
 		 var end_frame = Crafty.frame() + lifetime;
-		 return this.bind('EnterFrame', function(e) {
-		 		      this.attr('x', this.x + d.x);
-		 		      this.attr('y', this.y + d.y);
-				      if(e.frame > end_frame)
-					  this.destroy();
+		 return this
+		     .bind('EnterFrame', function(e) {
+		 	       this.attr('x', this.x + d.x);
+		 	       this.attr('y', this.y + d.y);
+			       if(e.frame > end_frame)
+				   this.destroy();
 			       return;
-		 	   });
+		 	   })
+		     .onHit('target', function(hits) {
+				var killed = false;
+				for(var i in hits) {
+				    if (!(hits[i].obj === shooter)) {
+					hits[i].obj.shot();
+					killed = true;
+				    }
+				}
+				if (killed)
+				    this.destroy();
+			    });
 	     }
 	 });
 
@@ -50,18 +63,38 @@ Crafty.c('TrooperControl', {
 				       .attr({ x: this.x + 3 , y: this.y + 5, z: 3 })
 				       .Bullet(Trig.fuzzy_angle(current_direction_rad, deviation_rad)
 					       , 5
-					       , 30);
+					       , 30
+					       , this);
 			       }
 			   });
 	     }
 });
 
+Crafty.c('target', {
+	     init : function() {
+		 this.requires('Collision');
+	     }
+	 });
+
+Crafty.c('ai_trooper', {
+	     init : function() {
+		 this.requires("SpriteAnimation, target");
+	     }
+	     ,ai_trooper : function() {
+		 return this;
+	     }
+	     , shot : function() {
+		 this.stop();
+		 this.destroy();
+	     }
+	 });
+
 Crafty.c('trooper', { 
 	     init : function() {
-		 this.requires("SpriteAnimation, TrooperControl");
+		 this.requires("SpriteAnimation, target, TrooperControl");
 	     },
 	     trooper :  function() {
-		 this.animate("walk", 0, 0, 3)
+		 return this.animate("walk", 0, 0, 3)
 		     .TrooperControl()
 		     .bind("NewDirection", function(direction) {
 			       if (!direction.x && !direction.y)
@@ -69,6 +102,5 @@ Crafty.c('trooper', {
 			       else
 				   this.stop().animate("walk", 20, -1);
 			   });
-		 return this;
 	     }
 	 });

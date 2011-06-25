@@ -25,4 +25,7 @@ Crafty.scene("main", function () {
 		 Crafty.e("2D, DOM, blue_trooper, trooper")
 		     .attr({ x: 16, y: 20, z:2 })
 		     .trooper();
+		 Crafty.e("2D, DOM, blue_trooper, ai_trooper")
+		     .attr({ x: 40, y: 60, z:2 })
+		     .ai_trooper();
 	     });
