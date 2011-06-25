@@ -20,7 +20,7 @@ Crafty.c('Bullet', {
 
 Crafty.c('TrooperControl', {
 	     init : function() {
-		 this.requires('Keyboard, Fourway');
+		 this.requires('Keyboard, Multiway');
 	     }
 	     , TrooperControl : function() {
 		 var current_direction_rad = 0;
@@ -28,14 +28,14 @@ Crafty.c('TrooperControl', {
 		 var last_shot_ms = 0;
 		 
 		 return this
-		     .fourway(1)
+		     .multiway(1, { UP_ARROW : -90, DOWN_ARROW : 90, RIGHT_ARROW : 0, LEFT_ARROW : 180} )
 		     .bind("NewDirection", function(movement) {
 			       if (movement.x || movement.y) {
 				   current_direction_rad = Math.atan2(movement.y, movement.x);
 			       }
 			   })
 		     .bind('KeyDown', function(e) {
-			       if (e.key != Crafty.keys.SPACE) {
+			       if (e.key != Crafty.keys.A) {
 				   return;
 			       }
 			       var current_time = new Date().getTime();
