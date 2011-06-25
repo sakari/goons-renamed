@@ -1,6 +1,6 @@
 Crafty.scene("loading", function () {
 		 Crafty.load(["sprites/ground.png", 
-			      "sprites/blue-trooper.png",
+			      "sprites/blue_trooper.png",
 			      "sprites/bullet.png"], function () {
 				 Crafty.scene("main"); //when everything is loaded, run the main scene
 			     });

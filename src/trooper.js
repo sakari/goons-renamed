@@ -1,8 +1,9 @@
 Crafty.sprite(6, 16, "sprites/blue_trooper.png", {
-		  blue_trooper : [0, 0]
+		  blue_trooper : [0, 0],
+		  blue_trooper_in_cover : [7, 0]
 	      });
-Crafty.sprite(3, 3, "sprites/bullet.png", {
-		 bullet : [0, 0] 
+Crafty.sprite(3, "sprites/bullet.png", {
+		  bullet : [0, 0] 
 	      });
 
 Crafty.c('Bullet', {
@@ -48,10 +49,11 @@ Crafty.c('TrooperControl', {
 			       }
 			   })
 		     .bind('KeyDown', function(e) {
-			       if (e.key != Crafty.keys.A) {
-				   return;
+			       if (e.key == Crafty.keys.A) {
+				   this.trigger('trooper.shoot', current_direction_rad);
+			       } else if (e.key == Crafty.keys.O) {
+				   this.trigger('trooper.takeCover');				   
 			       }
-			       this.trigger('trooper.shoot', current_direction_rad);
 			   });
 	     }
 });
@@ -91,11 +93,17 @@ Crafty.c('trooper', {
 		 var shoot_delay_ms = 300;
 		 var deviation_rad = 0.2;
 
-		 return this.animate("walk", 0, 0, 3)
+		 return this
+		     .animate("walk", 0, 0, 3)
+		     .animate("takeCover", 4, 0, 7)
 		     .bind('shot', function() {
 			       this.stop();
 			       this.destroy();
-			   }) 
+			   })
+		     .bind('trooper.takeCover', function() {
+			       this.animate("takeCover", 10);
+			       
+			   })
 		     .bind('trooper.shoot', function(direction) {
 			       var current_time = new Date().getTime();
 			       if (last_shot_ms + shoot_delay_ms < current_time) {
