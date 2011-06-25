@@ -8,11 +8,14 @@ Crafty.sprite(3, 3, "sprites/bullet.png", {
 Crafty.c('Bullet', {
 	     init : function() {
 	     },
-	     Bullet : function(direction_rad, speed) {
+	     Bullet : function(direction_rad, speed, lifetime) {
 		 var d = Trig.to_movement(direction_rad, speed);
-		 return this.bind('EnterFrame', function() {
-		 	       this.attr('x', this.x + d.x);
-		 	       this.attr('y', this.y + d.y);
+		 var end_frame = Crafty.frame() + lifetime;
+		 return this.bind('EnterFrame', function(e) {
+		 		      this.attr('x', this.x + d.x);
+		 		      this.attr('y', this.y + d.y);
+				      if(e.frame > end_frame)
+					  this.destroy();
 			       return;
 		 	   });
 	     }
@@ -45,7 +48,9 @@ Crafty.c('TrooperControl', {
 				   last_shot_ms = current_time;
 			     	   Crafty.e('2D, DOM, bullet, Bullet')
 				       .attr({ x: this.x + 3 , y: this.y + 5, z: 3 })
-				       .Bullet(Trig.fuzzy_angle(current_direction_rad, deviation_rad), 5);
+				       .Bullet(Trig.fuzzy_angle(current_direction_rad, deviation_rad)
+					       , 5
+					       , 30);
 			       }
 			   });
 	     }
