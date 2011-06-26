@@ -35,28 +35,40 @@ Crafty.c('Bullet', {
 	     }
 	 });
 
+//##src/move.js
+
 Crafty.c('TrooperControl', {
 	     init : function() {
-		 this.requires('Keyboard, Multiway');
+		 this.requires('Keyboard, Moving, MoveCtrl');
 	     }
 	     , TrooperControl : function() {
 		 var current_direction_rad = 0;
+		 var in_cover = false;
+		 var multiway_settings = { UP_ARROW : -90, DOWN_ARROW : 90, RIGHT_ARROW : 0, LEFT_ARROW : 180};
 		 return this
-		     .multiway(1, { UP_ARROW : -90, DOWN_ARROW : 90, RIGHT_ARROW : 0, LEFT_ARROW : 180} )
+		     .Moving()
+		     .MoveCtrl(1, multiway_settings)
 		     .bind("NewDirection", function(movement) {
-			       if (movement.x || movement.y) {
-				   current_direction_rad = Math.atan2(movement.y, movement.x);
-			       }
-			   })
-		     .bind('KeyDown', function(e) {
-			       if (e.key == Crafty.keys.A) {
-				   this.trigger('trooper.shoot', current_direction_rad);
-			       } else if (e.key == Crafty.keys.O) {
-				   this.trigger('trooper.takeCover');				   
-			       }
-			   });
+		     	       if (movement.x || movement.y) {
+		     		   current_direction_rad = Math.atan2(movement.y, movement.x);
+		     	       }
+		     	   })
+ 		     .bind('KeyDown', function(e) {
+		     	       if (e.key == Crafty.keys.A) {
+		     		   this.trigger('trooper.shoot', current_direction_rad);
+		     	       } else if (e.key === Crafty.keys.O) {
+				   if (in_cover) {
+				       this.trigger('trooper.takeCover')
+					   .moving.disable();				           
+				   } else {
+				       this.trigger('trooper.fromCover')
+					   .moving.enable();
+				   }
+		     		   in_cover = !in_cover;     		   
+		     	       }
+		     	   });
 	     }
-});
+	 });
 
 Crafty.c('target', {
 	     init : function() {
@@ -100,9 +112,11 @@ Crafty.c('trooper', {
 			       this.stop();
 			       this.destroy();
 			   })
+		     .bind('trooper.fromCover', function() {
+			       this.animate("walk", 30);
+			   })
 		     .bind('trooper.takeCover', function() {
 			       this.animate("takeCover", 10);
-			       
 			   })
 		     .bind('trooper.shoot', function(direction) {
 			       var current_time = new Date().getTime();
