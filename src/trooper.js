@@ -76,16 +76,17 @@ Crafty.c('target', {
 	     }
 	 });
 
-//#src/ai.js
+//##src/ai.js
 
 Crafty.c('ai_trooper', {
 	     init : function() {
-		 this.requires("SpriteAnimation, trooper, AiFollow");		 
+		 this.requires("SpriteAnimation, trooper, AiFollow, AiAbreast");		 
 	     }
 	     , ai_trooper : function() {
 		 return this
 		     .trooper()
-		     .AiFollow();
+		     .AiFollow()
+		     .AiAbreast();
 	     }
 	 });
 
@@ -100,9 +101,19 @@ Crafty.c('player_trooper', {
 	     } 
 	 });
 
+Crafty.c('Direction', {
+	     init : function() {
+		 var dir = 0;
+		 this.direction = function() { return dir; };
+		 return this.bind('Moved', function(old_position) {
+				      dir = Math.atan2(this.y - old_position.y, this.x - old_position.x);
+				  });
+	     }
+	 });
+
 Crafty.c('trooper', { 
 	     init : function() {
-		 this.requires("SpriteAnimation, target");
+		 this.requires("SpriteAnimation, target, Direction");
 	     },
 	     trooper :  function() {
 		 var last_shot_ms = 0;

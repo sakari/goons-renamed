@@ -23,17 +23,16 @@ Crafty.scene("main", function () {
 		 generateWorld();
 		 //##src/trooper.js
 		 var player = Crafty.e("2D, DOM, blue_trooper, player_trooper")
-		     .attr({ x: 16, y: 20, z:2 })
+		     .attr({ x: 100, y: 100, z:2 })
 		     .player_trooper();
 
 		 var trooper1 = Crafty.e("2D, DOM, blue_trooper, ai_trooper")
-		     .attr({ x: 40, y: 60, z:2 })
+		     .attr({ x: 110, y: 110, z:2 })
 		     .ai_trooper()
-		     .aiFollow.follow(player, 30, 1);
+		     .aiAbreast.abreast(player, 50, 1);
 
 		 var trooper2 = Crafty.e("2D, DOM, blue_trooper, ai_trooper")
-		     .attr({ x: 500, y: 60, z:2 })
+		     .attr({ x: 120, y: 120, z:2 })
 		     .ai_trooper()
-		     .aiFollow.follow(trooper1, 30, 1);
-
+		     .aiFollow.follow(player, 30, 1);
 	     });
