@@ -39,23 +39,17 @@ Crafty.c('Bullet', {
 
 Crafty.c('TrooperControl', {
 	     init : function() {
-		 this.requires('Keyboard, Moving, MoveCtrl');
+		 this.requires('Keyboard, Moving, Direction, MoveCtrl');
 	     }
 	     , TrooperControl : function() {
-		 var current_direction_rad = 0;
 		 var in_cover = false;
 		 var multiway_settings = { UP_ARROW : -90, DOWN_ARROW : 90, RIGHT_ARROW : 0, LEFT_ARROW : 180};
 		 return this
 		     .Moving()
 		     .MoveCtrl(1, multiway_settings)
-		     .bind("NewDirection", function(movement) {
-		     	       if (movement.x || movement.y) {
-		     		   current_direction_rad = Math.atan2(movement.y, movement.x);
-		     	       }
-		     	   })
  		     .bind('KeyDown', function(e) {
 		     	       if (e.key == Crafty.keys.A) {
-		     		   this.trigger('trooper.shoot', current_direction_rad);
+		     		   this.trigger('trooper.shoot', this.direction());
 		     	       } else if (e.key === Crafty.keys.O) {
 				   if (in_cover) {
 				       this.trigger('trooper.takeCover')
@@ -99,16 +93,6 @@ Crafty.c('player_trooper', {
 		     .trooper()
 		     .TrooperControl();
 	     } 
-	 });
-
-Crafty.c('Direction', {
-	     init : function() {
-		 var dir = 0;
-		 this.direction = function() { return dir; };
-		 return this.bind('Moved', function(old_position) {
-				      dir = Math.atan2(this.y - old_position.y, this.x - old_position.x);
-				  });
-	     }
 	 });
 
 Crafty.c('trooper', { 

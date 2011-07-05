@@ -1,3 +1,15 @@
+
+Crafty.c('Direction', {
+	     init : function() {
+		 var dir = 0;
+		 this.direction = function() { return dir; };
+		 return this.bind('Moved', function(old_position) {
+				      dir = Math.atan2(this.y - old_position.y, this.x - old_position.x);
+				  });
+	     }
+	 });
+
+
 Crafty.c("Moving", {
 	     Moving : function() {
 		 var dx = 0;
