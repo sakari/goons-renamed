@@ -1,89 +1,123 @@
 
 Crafty.c('Direction', {
 	     init : function() {
-		 var dir = 0;
-		 this.direction = function() { return dir; };
-		 return this.bind('Moved', function(old_position) {
-				      dir = Math.atan2(this.y - old_position.y, this.x - old_position.x);
-				  });
-	     }
+		 var dir = undefined;
+		 var self = this;
+		 this.direction = function(set_dir) {
+		     if (set_dir !== undefined) { 
+			 if (dir !== set_dir) {
+			     dir = set_dir;
+			     self.trigger('Direction', dir);
+			 }
+			 return self;
+		     }
+		     return dir;
+		 };
+	     },
+	     Direction : function() {}
 	 });
-
 
 Crafty.c("Moving", {
+	     init : function() {},
 	     Moving : function() {
-		 var dx = 0;
-		 var dy = 0;
+		 var d = { x : 0, y : 0 };
+		 var speed = 0;
 		 var enabled = true;
 		 var self = this;
-		 this.moving = {
-		     enable : function() {
-			 enabled = true;
-			 dx = 0;
-			 dy = 0;
-			 return self;
-		     }, 
-		     disable : function() {
-			 enabled = false;
-			 dx = 0; 
-			 dy = 0;
-			 return self;
-		     },
-		     move : function(set_dx, set_dy) {
-			 if (!enabled) return self;
-			 if (set_dx !== dx || set_dy !== dy) {
-			     self.trigger('NewDirection', {x : set_dx, y : set_dy} );
-			 }
-			 dx = set_dx;
-			 dy = set_dy;
-			 return self;
+
+		 function setMovement(direction) {
+		     if (speed === 0) {			 
+			 d = { x : 0, y : 0};
+		     } else {
+			 d = Trig.to_movement(direction, speed);
 		     }
+		     self.trigger('Moving', d);
+		 }
+		 this.moving = function(set_speed) {
+		     speed = set_speed;
+		     setMovement(self.direction());
 		 };
-		 return this.bind('EnterFrame', function() {
-				      if(dx !== 0) {
-					  this.x += dx;
-					  this.trigger('Moved', {x: this.x - dx, y: this.y});
-				      }
-				      if(dy !== 0) {
-					  this.y += dy;
-					  this.trigger('Moved', {x: this.x, y: this.y - dy});
-				      }			       
-				  });
+		 return this
+		     .bind('EnterFrame', function() {
+			       if(d.x !== 0 || d.y !== 0) {
+				   this.x += d.x;
+				   this.y += d.y;
+				   this.trigger('Moved', {x: this.x - d.x, y: this.y - d.y});
+			       }
+			   })
+		     .bind('Direction', function(dir) {
+			       setMovement(dir);
+			   });
 	     }
 	 });
 
-Crafty.c("MoveCtrl", {             
-	     init: function() {
-	     },
-	     MoveCtrl: function(speed, keyDirections) {
-		 var keys = {};
-		 var movement = { x : 0, y : 0 };
-
-		 function fillKeySpeeds(speed) {
-		     for(var k in keyDirections) {
-		 	 var keyCode = Crafty.keys[k] || k;
-		 	 keys[keyCode] = { 
-		 	     x: Math.round(Math.cos(keyDirections[k]*(Math.PI/180))*1000 * speed)/1000,
-		 	     y: Math.round(Math.sin(keyDirections[k]*(Math.PI/180))*1000 * speed)/1000
-		 	 };
+Crafty.c("KeyboardDirections", {
+	     KeyboardDirections : function(keyNamesToArrows, speed, keyUpDelay_ms) {
+		 var fstKey, sndKey;
+		 var keysToArrows = {};
+		 for (var k in keyNamesToArrows) {
+		     keysToArrows[Crafty.keys[k]] = keyNamesToArrows[k];
+		 }
+		 var arrows = {};
+		 function downKey(key) {
+		     arrows = {};
+		     if (fstKey) {
+			 sndKey = fstKey;
+			 arrows[keysToArrows[sndKey]] = true;
+		     }
+		     fstKey = key;
+		     arrows[keysToArrows[fstKey]] = true;
+		 }
+		 function upKey(key) {
+		     if (sndKey === key) {
+			 delete arrows[keysToArrows[sndKey]];
+			 sndKey = undefined;
+		     } else if (fstKey === key) {
+			 delete arrows[keysToArrows[fstKey]];
+			 fstKey = sndKey;
+			 sndKey = undefined;
 		     }
 		 }
-		 fillKeySpeeds(speed);
-		 
+		 function downKeysToDirections() {
+		     if (arrows.down && arrows.left)
+			 return Math.PI * 3 / 4;
+		     if (arrows.down && arrows.right)
+			 return Math.PI / 4;
+		     if (arrows.up && arrows.left)
+			 return Math.PI * 5 / 4;
+		     if (arrows.up && arrows.right)
+			 return Math.PI * 7 / 4;
+		     if (arrows.up)
+			 return Math.PI * 3 / 2;
+		     if (arrows.down)
+			 return Math.PI / 2;
+		     if (arrows.left)
+			 return Math.PI;
+		     if (arrows.right)
+			 return 0;
+		     return this.direction();
+		 }
 		 return this
 		     .bind("KeyDown", function(e) {
-			       if(keys[e.key]) {				   
-		 		   movement.x = Math.round((movement.x + keys[e.keyCode].x)*1000)/1000;
-		 		   movement.y = Math.round((movement.y + keys[e.keyCode].y)*1000)/1000;
-				   this.moving.move(movement.x, movement.y);
-		 	       }
-		 	   })
+			       if (!keysToArrows[e.keyCode])
+				   return;
+			       downKey(e.keyCode);
+			       this.direction(downKeysToDirections());
+			       this.moving(speed);
+			   })
 		     .bind("KeyUp", function(e) {
-		 	       if(keys[e.key]) {
-		 		   movement.x = Math.round((movement.x - keys[e.keyCode].x)*1000)/1000;
-		 		   movement.y = Math.round((movement.y - keys[e.keyCode].y)*1000)/1000;
-		 		   this.moving.move(movement.x, movement.y);
-		 	       }
-		 	   });
+			       if (!keysToArrows[e.keyCode])
+				   return;
+			       upKey(e.keyCode);
+			       if (fstKey === undefined && sndKey === undefined) {
+				   this.moving(0);				   
+			       }
+			       else {
+				   this.delay(function() {
+				   		  this.direction(downKeysToDirections());
+				   	      }, keyUpDelay_ms);
+			       }
+			   });
 	     }
 	 });
+

@@ -39,14 +39,13 @@ Crafty.c('Bullet', {
 
 Crafty.c('TrooperControl', {
 	     init : function() {
-		 this.requires('Keyboard, Moving, Direction, MoveCtrl');
+		 this.requires('Keyboard, KeyboardDirections');
 	     }
 	     , TrooperControl : function() {
 		 var in_cover = false;
-		 var multiway_settings = { UP_ARROW : -90, DOWN_ARROW : 90, RIGHT_ARROW : 0, LEFT_ARROW : 180};
+		 var directions = { UP_ARROW : 'up', DOWN_ARROW : 'down', RIGHT_ARROW : 'right', LEFT_ARROW : 'left'};
 		 return this
-		     .Moving()
-		     .MoveCtrl(1, multiway_settings)
+		     .KeyboardDirections(directions, 1, 50)
  		     .bind('KeyDown', function(e) {
 		     	       if (e.key == Crafty.keys.A) {
 		     		   this.trigger('trooper.shoot', this.direction());
@@ -97,14 +96,15 @@ Crafty.c('player_trooper', {
 
 Crafty.c('trooper', { 
 	     init : function() {
-		 this.requires("SpriteAnimation, target, Direction");
+		 this.requires("SpriteAnimation, target, Moving, Direction");
 	     },
 	     trooper :  function() {
 		 var last_shot_ms = 0;
 		 var shoot_delay_ms = 300;
 		 var deviation_rad = 0.2;
-
+		 
 		 return this
+		     .Moving()
 		     .animate("walk", 0, 0, 3)
 		     .animate("takeCover", 4, 0, 7)
 		     .bind('shot', function() {
@@ -129,8 +129,8 @@ Crafty.c('trooper', {
 					       , this);
 			       }
   			   })
-		     .bind("NewDirection", function(direction) {
-			       if (!direction.x && !direction.y)
+		     .bind("Moving", function(d) {
+			       if (!d.x && !d.y)
 				   this.stop();
 			       else
 				   this.stop().animate("walk", 20, -1);
