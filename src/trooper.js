@@ -50,16 +50,18 @@ Crafty.c('TrooperControl', {
 		     	       if (e.key == Crafty.keys.A) {
 		     		   this.trigger('trooper.shoot', this.direction());
 		     	       } else if (e.key === Crafty.keys.O) {
-				   if (in_cover) {
-				       this.trigger('trooper.takeCover')
-					   .moving.disable();				           
+				   if (!in_cover) {
+				       this.moving(0);
+				       this.trigger('trooper.takeCover');				       
 				   } else {
-				       this.trigger('trooper.fromCover')
-					   .moving.enable();
+				       this.trigger('trooper.fromCover');
 				   }
 		     		   in_cover = !in_cover;     		   
 		     	       }
-		     	   });
+		     	   })
+		     .bind('Moving', function(moving) {
+			       if (moving) in_cover = false;
+			   });
 	     }
 	 });
 
@@ -99,6 +101,7 @@ Crafty.c('trooper', {
 		 this.requires("SpriteAnimation, target, Moving, Direction");
 	     },
 	     trooper :  function() {
+		 var covering = false;
 		 var last_shot_ms = 0;
 		 var shoot_delay_ms = 500;
 		 var deviation_rad = 0.2;
@@ -112,10 +115,12 @@ Crafty.c('trooper', {
 			       this.destroy();
 			   })
 		     .bind('trooper.fromCover', function() {
-			       this.animate("walk", 30);
+			       this.stop().animate("walk", 30);
+			       covering = false;
 			   })
 		     .bind('trooper.takeCover', function() {
-			       this.animate("takeCover", 10);
+			       this.stop().animate("takeCover", 10);
+			       covering = true;
 			   })
 		     .bind('trooper.shoot', function(direction) {
 			       var current_time = new Date().getTime();
