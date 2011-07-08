@@ -100,7 +100,7 @@ Crafty.c('trooper', {
 	     },
 	     trooper :  function() {
 		 var last_shot_ms = 0;
-		 var shoot_delay_ms = 300;
+		 var shoot_delay_ms = 500;
 		 var deviation_rad = 0.2;
 		 
 		 return this
