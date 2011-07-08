@@ -50,10 +50,13 @@ Crafty.c('AiFollow', {
 		 
 		 function frameFunc() {
 		     var current_distance = Trig.distance(follow_target, self);
-		     if (current_distance < distance) return;
-		     var m = Trig.to_movement(Math.atan2(follow_target.y - self.y, follow_target.x - self.x), follow_speed); 
-		     self.x += m.x;
-		     self.y += m.y;
+		     if (current_distance < distance) {
+			 self.moving(0);
+			 return;
+		     }
+		     self.direction(Math.atan2(follow_target.y - self.y, 
+					       follow_target.x - self.x));
+		     self.moving(follow_speed);
 		 }
 		 
 		 self.aiFollow = {
@@ -63,8 +66,7 @@ Crafty.c('AiFollow', {
 			 follow_target = target;
 			 distance = distance_min;
 			 follow_speed = speed;
-			 self.bind('EnterFrame', frameFunc);
-			 return self;
+			 return self.bind('EnterFrame', frameFunc);
 		     }
 		     , stop : function() {
 			 if(follow_target !== undefined)
@@ -75,6 +77,6 @@ Crafty.c('AiFollow', {
 		 return this;
 	     }
 	     , AiFollow : function() {
-		 return this; 
+		 return this;
 	     }
 	 });

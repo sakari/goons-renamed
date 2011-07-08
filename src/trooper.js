@@ -130,10 +130,13 @@ Crafty.c('trooper', {
 			       }
   			   })
 		     .bind("Moving", function(d) {
-			       if (!d.x && !d.y)
-				   this.stop();
-			       else
+			       if (d) {
 				   this.stop().animate("walk", 20, -1);
+			       }				   
+			       else {
+				   this.stop();
+			       }
+				   
 			   });
 	     }
 	 });

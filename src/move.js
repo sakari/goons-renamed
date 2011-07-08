@@ -1,7 +1,7 @@
 
 Crafty.c('Direction', {
 	     init : function() {
-		 var dir = undefined;
+		 var dir = 0;
 		 var self = this;
 		 this.direction = function(set_dir) {
 		     if (set_dir !== undefined) { 
@@ -24,18 +24,30 @@ Crafty.c("Moving", {
 		 var speed = 0;
 		 var enabled = true;
 		 var self = this;
+		 var moving;
 
 		 function setMovement(direction) {
-		     if (speed === 0) {			 
+		     if (speed === 0) {
 			 d = { x : 0, y : 0};
+			 if (moving) {
+			     self.trigger('Moving', false);
+			     moving = false;
+			 }
 		     } else {
 			 d = Trig.to_movement(direction, speed);
+			 if (!moving) {
+			     self.trigger('Moving', true);
+			     moving = true;
+			 }
 		     }
-		     self.trigger('Moving', d);
+		     return self;
 		 }
 		 this.moving = function(set_speed) {
-		     speed = set_speed;
-		     setMovement(self.direction());
+		     if (set_speed !== speed) {
+			 speed = set_speed;
+			 setMovement(self.direction());
+		     }
+		     return self;
 		 };
 		 return this
 		     .bind('EnterFrame', function() {
