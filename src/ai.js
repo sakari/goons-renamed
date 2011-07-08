@@ -23,7 +23,7 @@ Crafty.c('AiAbreast', {
 			 abreast_distance = distance_min;
 			 center_point = center;
 			 targetTracker();
-			 self.aiFollow.follow(target_point, 10, speed);
+			 self.aiFollow.follow(target_point, 0.5, speed);
 			 center_point.bind('Moved', targetTracker);
 			 return self;
 		     }, 

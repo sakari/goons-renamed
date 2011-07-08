@@ -26,10 +26,10 @@ Crafty.scene("main", function () {
 		     .attr({ x: 100, y: 100, z:2 })
 		     .player_trooper();
 
-		 // var trooper1 = Crafty.e("2D, DOM, blue_trooper, ai_trooper")
-		 //     .attr({ x: 110, y: 110, z:2 })
-		 //     .ai_trooper()
-		 //     .aiAbreast.abreast(player, 50, 1);
+		 var trooper1 = Crafty.e("2D, DOM, blue_trooper, ai_trooper")
+		     .attr({ x: 110, y: 110, z:2 })
+		     .ai_trooper()
+		     .aiAbreast.abreast(player, 50, 1);
 
 		 var trooper2 = Crafty.e("2D, DOM, blue_trooper, ai_trooper")
 		     .attr({ x: 320, y: 120, z:2 })
