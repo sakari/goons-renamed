@@ -85,13 +85,33 @@ Crafty.c('ai_trooper', {
 	     }
 	 });
 
+Crafty.c('ViewCenter', {
+	     ViewCenter : function(lookahead_distance, center, correction_speed) {
+		 var viewport = {
+		     x : 0, y : 0
+		 };
+		 return this.bind('Moved', function(old_position) {
+				      var target_viewport_centre = Trig.point_at_direction(this.direction(), 
+											   lookahead_distance);
+				      var d = Trig.to_movement(Math.atan2(target_viewport_centre.y - viewport.y, 
+									  target_viewport_centre.x - viewport.x), 
+							       correction_speed);
+				      viewport.x = viewport.x + d.x;
+				      viewport.y = viewport.y + d.y;
+				      Crafty.viewport.x = - this.x + center.x - viewport.x;
+				      Crafty.viewport.y = - this.y + center.y - viewport.y;
+				  });
+	     }
+	 });
+
 Crafty.c('player_trooper', { 
 	     init : function() {
-		 this.requires("trooper, TrooperControl");
+		 this.requires("trooper, TrooperControl, ViewCenter");
 	     }
 	     , player_trooper : function() {
 		 return this
 		     .trooper()
+		     .ViewCenter(20, {x : 200, y : 200}, 1)
 		     .TrooperControl();
 	     } 
 	 });

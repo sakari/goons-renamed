@@ -1,4 +1,10 @@
 var Trig = {
+    point_at_direction : function(angle_rad, distance) {
+	return {
+	    x : Math.round(Math.cos(angle_rad) * distance),
+	    y : Math.round(Math.sin(angle_rad) * distance)
+	}
+    },
     to_movement : function(angle_rad, speed) {
 	return { x: Math.round(Math.cos(angle_rad) *1000 * speed)/1000,
 		 y: Math.round(Math.sin(angle_rad) *1000 * speed)/1000 };
