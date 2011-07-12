@@ -90,16 +90,37 @@ Crafty.c('ViewCenter', {
 		 var viewport = {
 		     x : 0, y : 0
 		 };
+		 var self = this;
+		 var world = Crafty("World");
+
+		 function viewport_component(d, window_size, component, world_size) {
+		     var d = viewport[component] + d[component];
+		     var vp = - self[component] + center[component] - d;
+		     if (vp > 0) {
+			 d = 0;
+			 vp = 0;
+		     } else if (vp - window_size < -world_size ) {
+			 d = viewport[component];
+			 vp = window_size - world_size;
+		     }
+		     viewport[component] = d;
+		     return vp;
+		 }
+
 		 this.viewport = function() {
-		     var target_viewport_centre = Trig.point_at_direction(this.direction(), 
+		     var target_viewport_center = Trig.point_at_direction(this.direction(), 
 									  lookahead_distance);
-		     var d = Trig.to_movement(Math.atan2(target_viewport_centre.y - viewport.y, 
-							 target_viewport_centre.x - viewport.x), 
+		     var d = Trig.to_movement(Math.atan2(target_viewport_center.y - viewport.y, 
+							 target_viewport_center.x - viewport.x), 
 					      correction_speed);
-		     viewport.x = viewport.x + d.x;
-		     viewport.y = viewport.y + d.y;
-		     Crafty.viewport.x = - this.x + center.x - viewport.x;
-		     Crafty.viewport.y = - this.y + center.y - viewport.y;
+		     Crafty.viewport.x = viewport_component(d, 
+							    400,
+							    "x", 
+							    500); 
+		     Crafty.viewport.y = viewport_component(d, 
+							    400,
+							    "y", 
+							    500);
 		     return this;  
 		 };
 

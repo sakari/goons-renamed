@@ -18,4 +18,4 @@ function generateWorld(width, height) {
 		.attr({ x: i * 16, y: j * 16, z:1 });
 	}
     }
-}
+};
