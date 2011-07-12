@@ -1,6 +1,6 @@
 window.onload = function () {
     //start crafty
-    Crafty.init();
+    Crafty.init(400, 400);
     //Crafty.canvas.init();
 
     //##src/trig.js

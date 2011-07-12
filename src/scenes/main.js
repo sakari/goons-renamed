@@ -1,6 +1,6 @@
 Crafty.scene("main", function () {
 		 //##src/world.js
-		 generateWorld();
+		 generateWorld(500, 500);
 
 		 //##src/trooper.js
 		 var player = Crafty.e("2D, DOM, blue_trooper, player_trooper")

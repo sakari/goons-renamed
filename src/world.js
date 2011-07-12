@@ -1,4 +1,4 @@
-function generateWorld() {
+function generateWorld(width, height) {
     Crafty.sprite(16, "sprites/ground.png", {
 		      ground0 : [0, 0],
 		      ground1 : [1, 0],
@@ -11,8 +11,8 @@ function generateWorld() {
 		      ground8 : [8, 0],
 		      ground9 : [9, 0]
 		  });
-    for (var i = 0; i < 25; i++) {
-	for (var j = 0; j < 21; j++) {
+    for (var i = 0; i * 16 < width; i++) {
+	for (var j = 0; j * 16 < height; j++) {
 	    var groundType = Crafty.randRange(0, 9);
 	    Crafty.e("2D, DOM, ground" + groundType)
 		.attr({ x: i * 16, y: j * 16, z:1 });
