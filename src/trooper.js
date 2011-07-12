@@ -90,16 +90,22 @@ Crafty.c('ViewCenter', {
 		 var viewport = {
 		     x : 0, y : 0
 		 };
+		 this.viewport = function() {
+		     var target_viewport_centre = Trig.point_at_direction(this.direction(), 
+									  lookahead_distance);
+		     var d = Trig.to_movement(Math.atan2(target_viewport_centre.y - viewport.y, 
+							 target_viewport_centre.x - viewport.x), 
+					      correction_speed);
+		     viewport.x = viewport.x + d.x;
+		     viewport.y = viewport.y + d.y;
+		     Crafty.viewport.x = - this.x + center.x - viewport.x;
+		     Crafty.viewport.y = - this.y + center.y - viewport.y;
+		     return this;  
+		 };
+
+		 this.viewport();
 		 return this.bind('Moved', function(old_position) {
-				      var target_viewport_centre = Trig.point_at_direction(this.direction(), 
-											   lookahead_distance);
-				      var d = Trig.to_movement(Math.atan2(target_viewport_centre.y - viewport.y, 
-									  target_viewport_centre.x - viewport.x), 
-							       correction_speed);
-				      viewport.x = viewport.x + d.x;
-				      viewport.y = viewport.y + d.y;
-				      Crafty.viewport.x = - this.x + center.x - viewport.x;
-				      Crafty.viewport.y = - this.y + center.y - viewport.y;
+				     this.viewport(); 
 				  });
 	     }
 	 });
