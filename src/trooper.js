@@ -97,7 +97,7 @@ Crafty.c('ViewCenter', {
 		     var d = viewport[component] + d[component];
 		     var vp = - self[component] + center[component] - d;
 		     if (vp > 0) {
-			 d = 0;
+			 d = viewport[component];
 			 vp = 0;
 		     } else if (vp - window_size < -world_size ) {
 			 d = viewport[component];
