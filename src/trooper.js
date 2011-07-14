@@ -87,7 +87,6 @@ Crafty.c('ai_trooper', {
 
 Crafty.c('ViewCenter', {
 	     ViewCenter : function(lookahead_distance, 
-				   center, 
 				   correction_speed, 
 				   world_dimensions) {
 		 var viewport = {
@@ -100,8 +99,9 @@ Crafty.c('ViewCenter', {
 					     window_size, 
 					     component, 
 					     world_size) {
+		     var center = Math.round(window_size / 2);
 		     var d = viewport[component] + d[component];
-		     var vp = - self[component] + center[component] - d;
+		     var vp = - self[component] + center - d;
 		     if (vp > 0) {
 			 d = viewport[component];
 			 vp = 0;
@@ -120,11 +120,11 @@ Crafty.c('ViewCenter', {
 							 target_viewport_center.x - viewport.x), 
 					      correction_speed);
 		     Crafty.viewport.x = viewport_component(d, 
-							    400,
+							    Crafty.DOM.window.width,
 							    "x", 
 							    world_dimensions.width); 
 		     Crafty.viewport.y = viewport_component(d, 
-							    400,
+							    Crafty.DOM.window.height,
 							    "y", 
 							    world_dimensions.height);
 		     return this;  
@@ -144,7 +144,7 @@ Crafty.c('player_trooper', {
 	     , player_trooper : function() {
 		 return this
 		     .trooper()
-		     .ViewCenter(20, {x : 200, y : 200}, 1, 
+		     .ViewCenter(20, 1, 
 				 Crafty.settings.get('goons.world.dimensions'))
 		     .TrooperControl();
 	     } 
