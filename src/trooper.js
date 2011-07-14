@@ -2,6 +2,12 @@ Crafty.sprite(6, 16, "sprites/blue_trooper.png", {
 		  blue_trooper : [0, 0],
 		  blue_trooper_in_cover : [7, 0]
 	      });
+
+Crafty.sprite(6, 16, "sprites/red_trooper.png", {
+		  red_trooper : [0, 0],
+		  red_trooper_in_cover : [7, 0]
+	      });
+
 Crafty.sprite(3, "sprites/bullet.png", {
 		  bullet : [0, 0] 
 	      });
