@@ -1,4 +1,10 @@
 function generateWorld(width, height) {
+    Crafty.settings.register("goons.world.dimensions", 
+			     function() {});
+    Crafty.settings.modify("goons.world.dimensions", 
+			   { width : width , 
+			     height : height });
+
     Crafty.sprite(16, "sprites/ground.png", {
 		      ground0 : [0, 0],
 		      ground1 : [1, 0],
