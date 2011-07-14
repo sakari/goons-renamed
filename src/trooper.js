@@ -79,6 +79,15 @@ Crafty.c('target', {
 
 //##src/ai.js
 
+Crafty.c("enemy_trooper", {
+	     init : function() {
+		 this.requires("SpriteAnimation, trooper");
+	     }, enemy_trooper : function() {
+		 return this
+		     .trooper();
+	     }
+	 });
+
 Crafty.c('ai_trooper', {
 	     init : function() {
 		 this.requires("SpriteAnimation, trooper, AiFollow, AiAbreast");		 
