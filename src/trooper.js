@@ -71,16 +71,14 @@ Crafty.c('TrooperControl', {
 	     }
 	 });
 
-Crafty.c('target', {
-	     init : function() {
-	     }
-	 });
+Crafty.c('target');
+Crafty.c("blue");
+Crafty.c("red");
 
 //##src/ai.js
-
 Crafty.c("enemy_trooper", {
 	     init : function() {
-		 this.requires("SpriteAnimation, trooper");
+		 this.requires("SpriteAnimation, trooper, red");
 	     }, enemy_trooper : function() {
 		 return this
 		     .trooper();
@@ -89,14 +87,14 @@ Crafty.c("enemy_trooper", {
 
 Crafty.c('ai_trooper', {
 	     init : function() {
-		 this.requires("SpriteAnimation, trooper, AiAttack, AiFollow, AiAbreast");		 
+		 this.requires("SpriteAnimation, blue, trooper, AiAttack, AiFollow, AiAbreast");		 
 	     }
 	     , ai_trooper : function() {
 		 return this
 		     .trooper()
 		     .AiFollow()
 		     .AiAbreast()
-		     .AiAttack("enemy_trooper", 200);
+		     .AiAttack("red", "blue", 200);
 	     }
 	 });
 
@@ -154,7 +152,7 @@ Crafty.c('ViewCenter', {
 
 Crafty.c('player_trooper', { 
 	     init : function() {
-		 this.requires("trooper, TrooperControl, ViewCenter");
+		 this.requires("trooper, TrooperControl, ViewCenter, blue");
 	     }
 	     , player_trooper : function() {
 		 return this

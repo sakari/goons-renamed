@@ -2,19 +2,25 @@ Crafty.c('AiAttack', {
 	     init : function() {
 		 return this.requires("Collision");
 	     }, 
-	     AiAttack : function(enemy, attack_range) {
-		 var shoot_distance = 50;
+	     AiAttack : function(enemy, friend, attack_range) {
 		 var funnel_rad = 0.8;
 		 var self = this;
 		 var attack_area_entity = Crafty.e("2D, DOM, Collision")
 		     .attr({w : attack_range * 2, h : attack_range * 2, 
 			    x : this.x - attack_range, y : this.y - attack_range })
-		     .onHit(enemy, function(hits){
-				for (var i in hits) {
+		     .onHit("target", function(hits){
+				var shoot = false;
+				for (var i in hits) {				    
 				    if (Trig.in_funnel(self, self.direction(), hits[i].obj, funnel_rad)) {
-					self.trigger('trooper.shoot', self.direction());
+					if (hits[i].obj.has(enemy)) {
+					    shoot = true; 
+					} else if (hits[i].obj.has(friend)) {
+					    return;
+					}					
 				    }
 				}
+				if (shoot)
+				    self.trigger('trooper.shoot', self.direction());
 			    });
 		 function update_attack_area() {
 		     attack_area_entity.x = self.x - attack_range;
