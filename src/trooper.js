@@ -73,7 +73,6 @@ Crafty.c('TrooperControl', {
 
 Crafty.c('target', {
 	     init : function() {
-		 this.requires('Collision');
 	     }
 	 });
 
@@ -90,13 +89,14 @@ Crafty.c("enemy_trooper", {
 
 Crafty.c('ai_trooper', {
 	     init : function() {
-		 this.requires("SpriteAnimation, trooper, AiFollow, AiAbreast");		 
+		 this.requires("SpriteAnimation, trooper, AiAttack, AiFollow, AiAbreast");		 
 	     }
 	     , ai_trooper : function() {
 		 return this
 		     .trooper()
 		     .AiFollow()
-		     .AiAbreast();
+		     .AiAbreast()
+		     .AiAttack("enemy_trooper", 200);
 	     }
 	 });
 
