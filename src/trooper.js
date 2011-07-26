@@ -62,10 +62,8 @@ Crafty.c('TrooperControl', {
 				   if (!in_cover) {
 				       this.formation("hold", Crafty("ai_trooper"));
 				       this.trigger('trooper.takeCover');
-				       Crafty("ai_trooper").trigger('trooper.takeCover');
 				   } else {
 				       this.trigger('trooper.fromCover');
-				       Crafty("ai_trooper").trigger('trooper.fromCover');
 				   }
 		     		   in_cover = !in_cover;     		   
 		     	       } else if (e.key === Crafty.keys.E) {

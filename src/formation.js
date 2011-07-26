@@ -8,6 +8,7 @@ Crafty.c("Formation", {
 				 Crafty(troopers[i]).aiAbreast.stop();
 			     if (Crafty(troopers[i]).aiFollow)
 				 Crafty(troopers[i]).aiFollow.stop();
+			     Crafty(troopers[i]).trigger('trooper.takeCover');
 			 }
 		     },
 		     abreast : function(troopers) {
@@ -15,6 +16,7 @@ Crafty.c("Formation", {
 			 for (var i in troopers) {
 			     var abreast = Crafty(troopers[i]).aiAbreast;
 			     if (abreast) {
+				 Crafty(troopers[i]).trigger('trooper.fromCover');
 				 abreast.abreast(abreast_of, 50, 1);
 				 abreast_of = Crafty(troopers[i]);
 			     }
@@ -25,6 +27,7 @@ Crafty.c("Formation", {
 			 for (var i in troopers) {
 			     var follow = Crafty(troopers[i]).aiFollow;
 			     if (follow) {
+				 Crafty(troopers[i]).trigger('trooper.fromCover');
 				 follow.follow(follow_this, 50);
 				 follow_this = Crafty(troopers[i]);
 			     }
