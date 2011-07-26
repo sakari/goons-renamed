@@ -48,7 +48,6 @@ Crafty.c('TrooperControl', {
 		 this.requires('Keyboard, KeyboardDirections, Formation');
 	     }
 	     , TrooperControl : function() {
-		 var in_cover = false;
 		 var formations = { abreast : "abreast", line : "line" };
 		 var formation = undefined;
 		 var directions = { UP_ARROW : 'up', DOWN_ARROW : 'down', RIGHT_ARROW : 'right', LEFT_ARROW : 'left'};
@@ -59,13 +58,12 @@ Crafty.c('TrooperControl', {
 		     	       if (e.key == Crafty.keys.A) {
 		     		   this.trigger('trooper.shoot', this.direction());
 		     	       } else if (e.key === Crafty.keys.O) {
-				   if (!in_cover) {
+				   if (!this._trooper.in_cover) {
 				       this.formation("hold", Crafty("ai_trooper"));
 				       this.trigger('trooper.takeCover');
 				   } else {
 				       this.trigger('trooper.fromCover');
 				   }
-		     		   in_cover = !in_cover;     		   
 		     	       } else if (e.key === Crafty.keys.E) {
 				   if (formation === "line") {
 				       formation = formations.abreast;
@@ -75,10 +73,7 @@ Crafty.c('TrooperControl', {
 				   }
 				   this.formation(formation, Crafty("ai_trooper"));
 			       }
-		     	   })
-		     .bind('Moving', function(moving) {
-			       if (moving) in_cover = false;
-			   });
+		     	   });
 	     }
 	 });
 
@@ -177,10 +172,9 @@ Crafty.c('player_trooper', {
 Crafty.c('trooper', { 
 	     init : function() {
 		 this.requires("SpriteAnimation, target, Moving, Direction");
-		 this._trooper = { speed : 1 };
+		 this._trooper = { speed : 1, in_cover : false };
 	     },
 	     trooper :  function() {
-		 var covering = false;
 		 var last_shot_ms = 0;
 		 var shoot_delay_ms = 500;
 		 var deviation_rad = 0.2;
@@ -195,13 +189,13 @@ Crafty.c('trooper', {
 			   })
 		     .bind('trooper.fromCover', function() {
 			       this.stop().animate("walk", 30);
-			       covering = false;
+			       this._trooper.in_cover = false;
 			   })
 		     .bind('trooper.takeCover', function() {
 			       this.moving(0);
-			       if (!covering)
+			       if (!this._trooper.in_cover)
 				   this.stop().animate("takeCover", 10);
-			       covering = true;
+			       this._trooper.in_cover = true;
 			   })
 		     .bind('trooper.shoot', function(direction) {
 			       var current_time = new Date().getTime();
@@ -217,6 +211,7 @@ Crafty.c('trooper', {
   			   })
 		     .bind("Moving", function(d) {
 			       if (d) {
+				   this._trooper.in_cover = false;
 				   this.stop().animate("walk", 20, -1);
 			       }				   
 			       else {
