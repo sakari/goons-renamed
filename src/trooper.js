@@ -60,10 +60,12 @@ Crafty.c('TrooperControl', {
 		     		   this.trigger('trooper.shoot', this.direction());
 		     	       } else if (e.key === Crafty.keys.O) {
 				   if (!in_cover) {
-				       this.moving(0);
-				       this.trigger('trooper.takeCover');				       
+				       this.formation("hold", Crafty("ai_trooper"));
+				       this.trigger('trooper.takeCover');
+				       Crafty("ai_trooper").trigger('trooper.takeCover');
 				   } else {
 				       this.trigger('trooper.fromCover');
+				       Crafty("ai_trooper").trigger('trooper.fromCover');
 				   }
 		     		   in_cover = !in_cover;     		   
 		     	       } else if (e.key === Crafty.keys.E) {
@@ -198,7 +200,9 @@ Crafty.c('trooper', {
 			       covering = false;
 			   })
 		     .bind('trooper.takeCover', function() {
-			       this.stop().animate("takeCover", 10);
+			       this.moving(0);
+			       if (!covering)
+				   this.stop().animate("takeCover", 10);
 			       covering = true;
 			   })
 		     .bind('trooper.shoot', function(direction) {

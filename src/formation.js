@@ -2,6 +2,14 @@ Crafty.c("Formation", {
 	     Formation : function() {
 		 var self = this;
 		 var formations = {
+		     hold : function(troopers) {
+			 for (var i in troopers) {
+			     if (Crafty(troopers[i]).aiAbreast) 
+				 Crafty(troopers[i]).aiAbreast.stop();
+			     if (Crafty(troopers[i]).aiFollow)
+				 Crafty(troopers[i]).aiFollow.stop();
+			 }
+		     },
 		     abreast : function(troopers) {
 			 var abreast_of = self;
 			 for (var i in troopers) {

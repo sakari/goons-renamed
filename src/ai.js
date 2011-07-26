@@ -61,7 +61,8 @@ Crafty.c('AiAbreast', {
 		     }, 
 		     stop : function() {
 			 self.aiFollow.stop();
-			 center_point.unbind('Moved', targetTracker);
+			 if (center_point)
+			     center_point.unbind('Moved', targetTracker);
 			 return self;
 		     }
 		 };
