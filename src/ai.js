@@ -69,16 +69,17 @@ Crafty.c('AiAbreast', {
 	     },
 
 	     AiAbreast : function() {
-		 return this.AiFollow();
+		 return this;
 	     }
 	 });
 
 Crafty.c('AiFollow', {
 	     init : function() {
+	     }
+	     , AiFollow : function(follow_speed) {
 		 var self = this;
 		 var follow_target;
 		 var distance;
-		 var follow_speed; 
 		 
 		 function frameFunc() {
 		     var current_distance = Trig.distance(follow_target, self);
@@ -90,14 +91,12 @@ Crafty.c('AiFollow', {
 					       follow_target.x - self.x));
 		     self.moving(follow_speed);
 		 }
-		 
 		 self.aiFollow = {
-		     follow : function(target, distance_min, speed) {
+		     follow : function(target, distance_min) {
 			 if (follow_target !== undefined)
 			     self.unbind('EnterFrame', frameFunc);
 			 follow_target = target;
 			 distance = distance_min;
-			 follow_speed = speed;
 			 return self.bind('EnterFrame', frameFunc);
 		     }
 		     , stop : function() {
@@ -106,9 +105,6 @@ Crafty.c('AiFollow', {
 			 return self;
 		     }
 		 };
-		 return this;
-	     }
-	     , AiFollow : function() {
 		 return this;
 	     }
 	 });

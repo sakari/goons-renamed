@@ -42,16 +42,19 @@ Crafty.c('Bullet', {
 	 });
 
 //##src/move.js
-
+//##src/formation.js
 Crafty.c('TrooperControl', {
 	     init : function() {
-		 this.requires('Keyboard, KeyboardDirections');
+		 this.requires('Keyboard, KeyboardDirections, Formation');
 	     }
 	     , TrooperControl : function() {
 		 var in_cover = false;
+		 var formations = { abreast : "abreast", line : "line" };
+		 var formation = undefined;
 		 var directions = { UP_ARROW : 'up', DOWN_ARROW : 'down', RIGHT_ARROW : 'right', LEFT_ARROW : 'left'};
 		 return this
-		     .KeyboardDirections(directions, 1, 50)
+		     .Formation()
+		     .KeyboardDirections(directions, this._trooper.speed, 50)
  		     .bind('KeyDown', function(e) {
 		     	       if (e.key == Crafty.keys.A) {
 		     		   this.trigger('trooper.shoot', this.direction());
@@ -63,7 +66,15 @@ Crafty.c('TrooperControl', {
 				       this.trigger('trooper.fromCover');
 				   }
 		     		   in_cover = !in_cover;     		   
-		     	       }
+		     	       } else if (e.key === Crafty.keys.E) {
+				   if (formation === "line") {
+				       formation = formations.abreast;
+				   }
+				   else {
+				       formation = formations.line;
+				   }
+				   this.formation(formation, Crafty("ai_trooper"));
+			       }
 		     	   })
 		     .bind('Moving', function(moving) {
 			       if (moving) in_cover = false;
@@ -92,7 +103,7 @@ Crafty.c('ai_trooper', {
 	     , ai_trooper : function() {
 		 return this
 		     .trooper()
-		     .AiFollow()
+		     .AiFollow(this._trooper.speed)
 		     .AiAbreast()
 		     .AiAttack("red", "blue", 200);
 	     }
@@ -166,6 +177,7 @@ Crafty.c('player_trooper', {
 Crafty.c('trooper', { 
 	     init : function() {
 		 this.requires("SpriteAnimation, target, Moving, Direction");
+		 this._trooper = { speed : 1 };
 	     },
 	     trooper :  function() {
 		 var covering = false;

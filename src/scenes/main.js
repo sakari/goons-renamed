@@ -13,12 +13,9 @@ Crafty.scene("main", function () {
 
 		 var trooper1 = Crafty.e("2D, DOM, blue_trooper, ai_trooper")
 		     .attr({ x: 110, y: 110, z:2 })
-		     .ai_trooper()
-		     .aiAbreast.abreast(player, 50, 1);
+		     .ai_trooper();
 
 		 var trooper2 = Crafty.e("2D, DOM, blue_trooper, ai_trooper")
 		     .attr({ x: 320, y: 120, z:2 })
-		     .ai_trooper()
-		     .aiFollow.follow(player, 30, 1);
-		 
+		     .ai_trooper();		 
 	     });
