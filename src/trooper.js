@@ -156,16 +156,38 @@ Crafty.c('ViewCenter', {
 	     }
 	 });
 
+Crafty.sprite(5, 6, 'sprites/player_identifier.png', 
+	      { player_identifier_sprite : [0, 0] });
+
+Crafty.c('player_identifier', {
+	     init : function() {
+	     },
+	     player_identifier : function() {
+		 var self = this;
+		 var stripes = Crafty.e('2D, DOM, SpriteAnimation, player_identifier_sprite')
+		     .attr({ x : self.x,
+			     y : self.y - 5,
+			     z : 4
+			   });
+		 this.bind('Moved', function() {
+			       stripes.x = self.x;
+			       stripes.y = self.y - 5;
+			   });
+	     }
+	 }
+	);
+
 Crafty.c('player_trooper', { 
 	     init : function() {
-		 this.requires("trooper, TrooperControl, ViewCenter, blue");
+		 this.requires("trooper, TrooperControl, ViewCenter, blue, player_identifier");
 	     }
 	     , player_trooper : function() {
 		 return this
 		     .trooper()
 		     .ViewCenter(20, 1, 
 				 Crafty.settings.get('goons.world.dimensions'))
-		     .TrooperControl();
+		     .TrooperControl()
+		     .player_identifier();
 	     } 
 	 });
 
