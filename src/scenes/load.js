@@ -3,6 +3,7 @@ Crafty.scene("loading", function () {
 			      "images/grass.png",
 			      "sprites/player_identifier.png",
 			      "sprites/blue_trooper.png",
+			      "sprites/barracks.png",
 			      "sprites/bullet.png"], function () {
 				 Crafty.scene("main"); //when everything is loaded, run the main scene
 			     });
