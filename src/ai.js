@@ -1,3 +1,39 @@
+Crafty.c('AiHunt', {
+	     init : function() {
+		 return this.requires('AiFollow');
+	     },
+	     AiHunt : function(enemy) {
+		 var self = this;
+		 var distance_to_nearest_enemy;
+		 var nearest_enemy;
+
+		 function nearestEnemy() {
+		     var enemies = Crafty(enemy); 
+		     for (var i in enemies) {
+			 var current_enemy = Crafty(enemies[i]);
+			 if (Trig.is_point(current_enemy) && Trig.is_point(self)) {
+			     var distance_to_current = Trig.distance(current_enemy, self);
+			     if (distance_to_nearest_enemy === undefined || 
+				 (distance_to_nearest_enemy > distance_to_current &&
+				  current_enemy !== nearest_enemy)
+			    ) {
+				distance_to_nearest_enemy = distance_to_current;
+				nearest_enemy = current_enemy;
+				nearest_enemy.bind('Remove', function() {
+						       nearest_enemy = undefined;
+						       distance_to_nearest_enemy = undefined; 
+						   });
+				self.aiFollow.follow(nearest_enemy, 100);
+			    }
+			 }
+		     }
+		 }
+		 return this
+		     .bind('EnterFrame', nearestEnemy)
+		     .AiFollow(this._trooper.speed);
+	     }
+	 });
+
 Crafty.c('AiAttack', {
 	     init : function() {
 		 return this.requires("Collision");
@@ -83,6 +119,8 @@ Crafty.c('AiFollow', {
 		 var distance;
 		 
 		 function frameFunc() {
+		     if (follow_target === undefined)
+			 return;
 		     var current_distance = Trig.distance(follow_target, self);
 		     if (current_distance < distance) {
 			 self.moving(0);
@@ -94,18 +132,20 @@ Crafty.c('AiFollow', {
 		 }
 		 self.aiFollow = {
 		     follow : function(target, distance_min) {
-			 if (follow_target !== undefined)
-			     self.unbind('EnterFrame', frameFunc);
 			 follow_target = target;
+			 if(follow_target)
+			     follow_target.bind('Remove', function() { 
+						    follow_target = undefined;
+						    console.log('target destroyed');
+						    self.moving(0);
+						});
 			 distance = distance_min;
-			 return self.bind('EnterFrame', frameFunc);
 		     }
 		     , stop : function() {
-			 if(follow_target !== undefined)
-			     self.unbind('EnterFrame', frameFunc);
+			 follow_target = undefined;
 			 return self;
 		     }
 		 };
-		 return this;
+		 return this.bind('EnterFrame', frameFunc);
 	     }
 	 });

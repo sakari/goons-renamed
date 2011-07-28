@@ -84,9 +84,11 @@ Crafty.c("red");
 //##src/ai.js
 Crafty.c("enemy_trooper", {
 	     init : function() {
-		 this.requires("SpriteAnimation, trooper, red");
+		 this.requires("SpriteAnimation, trooper, red, AiAttack, AiHunt");
 	     }, enemy_trooper : function() {
 		 return this
+		     .AiAttack("blue", "red", 100)
+		     .AiHunt("blue", 50)
 		     .trooper();
 	     }
 	 });
