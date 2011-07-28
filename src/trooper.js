@@ -28,14 +28,13 @@ Crafty.c('Bullet', {
 			       return;
 		 	   })
 		     .onHit('target', function(hits) {
-				var killed = false;
+				var is_hit = false;
 				for(var i in hits) {
 				    if (!(hits[i].obj === shooter)) {
-					hits[i].obj.trigger('shot');
-					killed = true;
+					is_hit = hits[i].obj.is_shot();
 				    }
 				}
-				if (killed)
+				if (is_hit)
 				    this.destroy();
 			    });
 	     }
@@ -203,14 +202,16 @@ Crafty.c('trooper', {
 		 var shoot_delay_ms = 500;
 		 var deviation_rad = 0.2;
 		 
+		 this.is_shot = function() {
+		     if (this._trooper.in_cover) return;
+		     this.stop();
+		     this.destroy();
+		 };
+
 		 return this
 		     .Moving()
 		     .animate("walk", 0, 0, 3)
 		     .animate("takeCover", 4, 0, 7)
-		     .bind('shot', function() {
-			       this.stop();
-			       this.destroy();
-			   })
 		     .bind('trooper.fromCover', function() {
 			       this.stop().animate("walk", 30);
 			       this._trooper.in_cover = false;
