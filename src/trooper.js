@@ -203,9 +203,10 @@ Crafty.c('trooper', {
 		 var deviation_rad = 0.2;
 		 
 		 this.is_shot = function() {
-		     if (this._trooper.in_cover) return;
+		     if (this._trooper.in_cover) return false;
 		     this.stop();
 		     this.destroy();
+		     return true;
 		 };
 
 		 return this
