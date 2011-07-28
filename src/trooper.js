@@ -30,7 +30,7 @@ Crafty.c('Bullet', {
 		     .onHit('target', function(hits) {
 				var is_hit = false;
 				for(var i in hits) {
-				    if (!(hits[i].obj === shooter)) {
+				    if (!(hits[i].obj === shooter) && hits[i].obj.is_shot !== undefined) {
 					is_hit = hits[i].obj.is_shot();
 				    }
 				}
